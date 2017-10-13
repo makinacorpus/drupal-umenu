@@ -136,14 +136,18 @@ function umenu_schema() {
         'columns' => ['parent_id' => 'id'],
         'delete'  => 'set null',
       ],
-      'item_node_site' => [
-        'table'   => 'ucms_site_node',
-        'columns' => [
-          'site_id' => 'site_id',
-          'node_id' => 'node_id',
-        ],
-        'delete'  => 'cascade',
-      ],
+//
+// @todo Temporary deactivating this, MySQL is so stupid, I have no meaningful
+//   message about why it does break in sites that actually are in prod...
+//
+//       'item_node_site' => [
+//         'table'   => 'ucms_site_node',
+//         'columns' => [
+//           'site_id' => 'site_id',
+//           'node_id' => 'node_id',
+//         ],
+//         'delete'  => 'cascade',
+//       ],
     ]
   ];
 
@@ -258,4 +262,36 @@ function umenu_update_7006() {
       'default'     => null,
     ]);
   }
+}
+
+/**
+ * Delete broken data and restore database constraints.
+ */
+function umenu_update_7011() {
+  // Remove menus that are referencing non existing sites
+  db_query("
+      DELETE FROM {umenu}
+      WHERE
+          site_id IS NOT NULL
+          AND site_id NOT IN (
+              SELECT id FROM {ucms_site}
+          )
+  ");
+  // Remove orphaned items due to previous query
+  db_query("
+      DELETE FROM {umenu_item} WHERE menu_id NOT IN (
+          SELECT id FROM {umenu}
+      )
+  ");
+  // Remove drupal menu links that don't belong to any menu
+  db_query("
+      DELETE FROM {menu_links}
+      WHERE
+          menu_name NOT IN ('navigation', 'management', 'user-menu')
+          AND menu_name NOT IN (
+              SELECT menu_name FROM {umenu}
+          )
+  ");
+  // Force constraints
+  db_constraint_fix('umenu');
 }
