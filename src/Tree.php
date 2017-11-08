@@ -35,7 +35,7 @@ final class Tree extends TreeBase
     /**
      * Get menu identifier
      *
-     * @return id
+     * @return int
      */
     public function getMenuId()
     {

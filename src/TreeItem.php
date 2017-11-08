@@ -15,6 +15,7 @@ final class TreeItem extends TreeBase
     private $weight;
     private $title;
     private $description;
+    private $depth;
 
     public function getId()
     {
@@ -59,6 +60,11 @@ final class TreeItem extends TreeBase
     public function getRoute()
     {
         return 'node/' . $this->node_id;
+    }
+
+    public function getDepth()
+    {
+        return $this->depth;
     }
 
     public function isInTrailOf($nodeId)
