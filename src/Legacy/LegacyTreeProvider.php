@@ -35,6 +35,8 @@ class LegacyTreeProvider extends AbstractTreeProvider
                             AS weight,
                         l.link_title
                             AS title,
+                        l.depth
+                            AS depth,
                         NULL
                             AS description
                     FROM {menu_links} l
