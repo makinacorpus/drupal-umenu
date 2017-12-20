@@ -27,7 +27,7 @@
     },
     "require" : {
         "makinacorpus/drupal-plusql" : "^1.0.0",
-        "makinacorpus/drupal-sf-dic" : "^3.0"
+        "makinacorpus/drupal-sf-dic" : "^3.0|^4"
     },
     "minimum-stability": "dev"
 }
