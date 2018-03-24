@@ -4,7 +4,7 @@
     "description": "Drupal core menu module replacement that does not attach to node types",
     "keywords": [],
     "homepage": "http://github.com/makinacorpus/drupal-umenu",
-    "license": "GPL-2",
+    "license": "GPL-2.0-or-later",
     "authors": [
         {
             "name": "Pierre Rineau",
