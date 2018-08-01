@@ -9,110 +9,56 @@ interface ItemStorageInterface
 {
     /**
      * Get menu identifier for item
-     *
-     * @param int $itemId
-     *
-     * @return int
      */
-    public function getMenuIdFor($itemId);
+    public function getMenuIdFor(int $itemId): int;
 
     /**
      * Append new item within menu
-     *
-     * @param int $menuId
-     * @param int $nodeId
-     * @param string $title
-     * @param string $description
-     *
-     * @return int
      */
-    public function insert($menuId, $nodeId, $title, $description = null);
+    public function insert(int $menuId, int $nodeId, string $title, $description = null): int;
 
     /**
      * Append new item as child of the selected item
-     *
-     * @param int $otherItemId
-     * @param int $nodeId
-     * @param string $title
-     * @param string $description
-     *
-     * @return int
      */
-    public function insertAsChild($otherItemId, $nodeId, $title, $description = null);
+    public function insertAsChild(int $otherItemId, int $nodeId, string $title, $description = null): int;
 
     /**
      * Insert item after another
-     *
-     * @param int $otherItemId
-     * @param int $nodeId
-     * @param string $title
-     * @param string $description
-     *
-     * @return int
      */
-    public function insertAfter($otherItemId, $nodeId, $title, $description = null);
+    public function insertAfter(int $otherItemId, int $nodeId, string $title, $description = null): int;
 
     /**
      * Insert item before another
-     *
-     * @param int $otherItemId
-     * @param int $nodeId
-     * @param string $title
-     * @param string $description
-     *
-     * @return int
      */
-    public function insertBefore($otherItemId, $nodeId, $title, $description = null);
+    public function insertBefore(int $otherItemId, int $nodeId, string $title, $description = null): int;
 
     /**
      * Update item
-     *
-     * @param int $itemId
-     * @param int $nodeId
-     * @param string $title
-     * @param string $description
      */
-    public function update($itemId, $nodeId = null, $title = null, $description = null);
+    public function update(int $itemId, $nodeId = null, $title = null, $description = null);
 
     /**
      * Reparent item
-     *
-     * @param int $itemId
-     * @param int $otherItemId
      */
-    public function moveAsChild($itemId, $otherItemId);
+    public function moveAsChild(int $itemId, int $otherItemId);
 
     /**
      * Orphan item
-     *
-     * @param int $itemId
      */
-    public function moveToRoot($itemId);
+    public function moveToRoot(int $itemId);
 
     /**
      * Insert item after another
-     *
-     * @param int $otherItemId
-     * @param int $nodeId
-     *
-     * @return int
      */
-    public function moveAfter($itemId, $otherItemId);
+    public function moveAfter(int $itemId, int $otherItemId);
 
     /**
      * Insert item before another
-     *
-     * @param int $otherItemId
-     * @param int $nodeId
-     *
-     * @return int
      */
-    public function moveBefore($itemId, $otherItemId);
+    public function moveBefore(int $itemId, int $otherItemId);
 
     /**
      * Delete item
-     *
-     * @param int $itemId
      */
-    public function delete($itemId);
+    public function delete(int $itemId);
 }

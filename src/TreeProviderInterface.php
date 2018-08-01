@@ -9,10 +9,8 @@ interface TreeProviderInterface
 {
     /**
      * Can this implementation clone trees
-     *
-     * @return boolean
      */
-    public function mayCloneTree();
+    public function mayCloneTree(): bool;
 
     /**
      * Clone full tree in given menu
@@ -25,7 +23,7 @@ interface TreeProviderInterface
      * @return Tree
      *   Newly created tree
      */
-    public function cloneTreeIn($menuId, Tree $tree);
+    public function cloneTreeIn($menuId, Tree $tree): Tree;
 
     /**
      * Find most revelant tree for node
@@ -60,5 +58,5 @@ interface TreeProviderInterface
      *
      * @return \MakinaCorpus\Umenu\Tree
      */
-    public function buildTree($menuId, $withAccess = false, $userId = null, $relocateOrphans = false);
+    public function buildTree($menuId, $withAccess = false, $userId = null, $relocateOrphans = false, $resetCache = false): Tree;
 }

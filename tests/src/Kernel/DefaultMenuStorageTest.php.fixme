@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Umenu\Tests;
+namespace Drupal\Tests\umenu\Kernel;
 
 use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
 use MakinaCorpus\Umenu\Menu;

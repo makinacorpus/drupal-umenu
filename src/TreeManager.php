@@ -25,25 +25,25 @@ class TreeManager
     }
 
     /**
-     * @return TreeProviderInterface
+     * Get tree provider
      */
-    public function getTreeProvider()
+    public function getTreeProvider(): TreeProviderInterface
     {
         return $this->provider;
     }
 
     /**
-     * @return MenuStorageInterface
+     * Get menu storage
      */
-    public function getMenuStorage()
+    public function getMenuStorage(): MenuStorageInterface
     {
         return $this->menuStorage;
     }
 
     /**
-     * @return ItemStorageInterface
+     * Get menu item storage
      */
-    public function getItemStorage()
+    public function getItemStorage(): ItemStorageInterface
     {
         return $this->itemStorage;
     }
@@ -55,12 +55,11 @@ class TreeManager
      * @param TreeBase $item
      * @param TreeBase $parent
      */
-    private function cloneTreeRecursion($menuId, TreeBase $item, $parentId = null)
+    private function cloneTreeRecursion(int $menuId, TreeBase $item, $parentId = null)
     {
         if ($item->hasChildren()) {
 
             $previous = null;
-
             foreach ($item->getChildren() as $child) {
 
                 if ($previous) {
@@ -88,7 +87,7 @@ class TreeManager
      * @return Tree
      *   Newly created tree
      */
-    public function cloneMenu($menuId, $siteId, $name)
+    public function cloneMenu(int $menuId, int $siteId, string $name): Tree
     {
         $source = $this->menuStorage->load($menuId);
         $values = [
@@ -112,7 +111,7 @@ class TreeManager
      * @return Tree
      *   Newly created tree
      */
-    public function cloneMenuIn($sourceMenuId, $targetMenuId)
+    public function cloneMenuIn(int $sourceMenuId, int $targetMenuId): Tree
     {
         $source = $this->menuStorage->load($sourceMenuId);
         $target = $this->menuStorage->load($targetMenuId);
@@ -134,7 +133,7 @@ class TreeManager
      * @return Tree
      *   Newly created tree
      */
-    public function cloneTreeIn($menuId, Tree $tree)
+    public function cloneTreeIn(int $menuId, Tree $tree): Tree
     {
         if ($this->provider->mayCloneTree()) {
             return $this->provider->cloneTreeIn($menuId, $tree);
@@ -169,7 +168,7 @@ class TreeManager
      * @return Tree
      *   It may be null if nothing has been found
      */
-    public function findTreeForNode($nodeId, array $conditions = [], $withAccess = false, $relocateOrphans = false)
+    public function findTreeForNode(int $nodeId, array $conditions = [], bool $withAccess = false, bool $relocateOrphans = false)
     {
         $menuId = $this->provider->findTreeForNode($nodeId, $conditions);
 
@@ -189,9 +188,9 @@ class TreeManager
      *   When a parent is not visible nor accessible, should this tree
      *   relocate children to the menu root
      *
-     * @return \MakinaCorpus\Umenu\Tree
+     * @return Tree
      */
-    public function buildTree($menuId, $withAccess = false, $relocateOrphans = false, $resetCache = false)
+    public function buildTree($menuId, $withAccess = false, $userId = null, $relocateOrphans = false, $resetCache = false): Tree
     {
         if (!is_numeric($menuId)) {
             $menuId = $this->menuStorage->load($menuId)->getId();

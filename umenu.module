@@ -1,28 +1,26 @@
 <?php
 /**
- * @file
  * µMenu module.
  */
+
+use MakinaCorpus\Umenu\MenuStorageInterface;
+use MakinaCorpus\Umenu\TreeManager;
 
 /**
  * Get menu storage service
  *
- * @return \MakinaCorpus\Umenu\MenuStorage
- *
  * @deprecated
  */
-function umenu_get_storage() {
+function umenu_get_storage(): MenuStorageInterface {
   return \Drupal::service('umenu.menu_storage');
 }
 
 /**
  * Get the tree manager service
  *
- * @return \MakinaCorpus\Umenu\TreeManager
- *
  * @deprecated
  */
-function umenu_get_manager() {
+function umenu_get_manager(): TreeManager {
   return \Drupal::service('umenu.manager');
 }
 
@@ -30,6 +28,8 @@ function umenu_get_manager() {
  * Implements hook_page_build().
  */
 function umenu_page_build(&$page) {
+  return;
+  /*
   // Overrides Drupal breadcrumb to match our custom menu trees if any.
   // We are doing it very early, it might be useless, but in most cases
   // it will be, and it will also prepoluate a few menu caches.
@@ -53,21 +53,23 @@ function umenu_page_build(&$page) {
       }
     }
   }
+   */
 }
 
 /**
  * Menu load callback
- */
+ *
 function umenu_load($id) {
   try {
     return umenu_get_storage()->load($id);
   } catch (\InvalidArgumentException $e) {}
   return false;
 }
+ */
 
 /**
  * Implements hook_theme().
- */
+ *
 function umenu_theme() {
   return [
     'umenu' => [
@@ -76,10 +78,11 @@ function umenu_theme() {
     ],
   ];
 }
+ */
 
 /**
  * Implements template_preprocess_HOOK().
- */
+ *
 function template_preprocess_umenu(&$variables, $hook) {
   if (isset($variables['name'])) {
     $variables['theme_hook_suggestions'][] = 'umenu__' . str_replace('-', '_', $variables['name']);
@@ -96,3 +99,4 @@ function template_preprocess_umenu(&$variables, $hook) {
     }
   }
 }
+ */

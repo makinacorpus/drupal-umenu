@@ -1,8 +1,0 @@
-name = µMenu
-description = Drupal core menu module replacement that does not attach to node types
-core = 7.x
-package = Utility
-php = 5.5
-dependencies[] = sf_dic
-dependencies[] = plusql
-dependencies[] = ucms_site

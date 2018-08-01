@@ -1,8 +1,7 @@
 <?php
 
-namespace MakinaCorpus\Umenu\Event;
+namespace MakinaCorpus\Umenu;
 
-use MakinaCorpus\Umenu\Menu;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class MenuEvent extends GenericEvent
@@ -15,10 +14,8 @@ class MenuEvent extends GenericEvent
 
     /**
      * Get menu
-     *
-     * @return Menu
      */
-    public function getMenu()
+    public function getMenu(): Menu
     {
         return $this->subject;
     }

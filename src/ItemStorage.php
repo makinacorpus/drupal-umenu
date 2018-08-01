@@ -2,6 +2,8 @@
 
 namespace MakinaCorpus\Umenu;
 
+use Drupal\Core\Database\Connection;
+
 /**
  * Item storage using our custom schema
  */
@@ -9,12 +11,15 @@ class ItemStorage implements ItemStorageInterface
 {
     private $database;
 
-    public function __construct(\DatabaseConnection $database)
+    /**
+     * Default constructor
+     */
+    public function __construct(Connection $database)
     {
         $this->database = $database;
     }
 
-    protected function validateMenu($menuId, $title, $nodeId)
+    protected function validateMenu(int $menuId, string $title, int $nodeId)
     {
         if (empty($menuId)) {
             throw new \InvalidArgumentException("Menu identifier cannot be empty");
@@ -39,7 +44,7 @@ class ItemStorage implements ItemStorageInterface
         return array_values($values);
     }
 
-    protected function validateItem($otherItemId, $title, $nodeId)
+    protected function validateItem(int $otherItemId, string $title, int $nodeId)
     {
         if (empty($otherItemId)) {
             throw new \InvalidArgumentException("Relative item identifier cannot be empty");
@@ -68,7 +73,7 @@ class ItemStorage implements ItemStorageInterface
         return array_values($values);
     }
 
-    protected function validateMove($itemId, $otherItemId)
+    protected function validateMove(int $itemId, int $otherItemId)
     {
         if (empty($otherItemId)) {
             throw new \InvalidArgumentException("Relative item identifier cannot be empty");
@@ -107,7 +112,7 @@ class ItemStorage implements ItemStorageInterface
      *
      * @return int
      */
-    public function getMenuIdFor($itemId)
+    public function getMenuIdFor(int $itemId): int
     {
         // Find parent identifier
         $menuId = (int)$this
@@ -129,7 +134,7 @@ class ItemStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function insert($menuId, $nodeId, $title, $description = null)
+    public function insert(int $menuId, int $nodeId, string $title, $description = null): int
     {
         list($menuId, $siteId) = $this->validateMenu($menuId, $title, $nodeId);
 
@@ -161,7 +166,7 @@ class ItemStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function insertAsChild($otherItemId, $nodeId, $title, $description = null)
+    public function insertAsChild(int $otherItemId, int $nodeId, string $title, $description = null): int
     {
         list($menuId, $siteId) = $this->validateItem($otherItemId, $title, $nodeId);
 
@@ -193,7 +198,7 @@ class ItemStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function insertAfter($otherItemId, $nodeId, $title, $description = null)
+    public function insertAfter(int $otherItemId, int $nodeId, string $title, $description = null): int
     {
         list($menuId, $siteId, $parentId, $weight) = $this->validateItem($otherItemId, $title, $nodeId);
 
@@ -241,7 +246,7 @@ class ItemStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function insertBefore($otherItemId, $nodeId, $title, $description = null)
+    public function insertBefore(int $otherItemId, int $nodeId, string $title, $description = null): int
     {
         list($menuId, $siteId, $parentId, $weight) = $this->validateItem($otherItemId, $title, $nodeId);
 
@@ -289,7 +294,7 @@ class ItemStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function update($itemId, $nodeId = null, $title = null, $description = null)
+    public function update(int $itemId, $nodeId = null, $title = null, $description = null)
     {
         $exists = (bool)$this
             ->database
@@ -331,7 +336,7 @@ class ItemStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function moveAsChild($itemId, $otherItemId)
+    public function moveAsChild(int $itemId, int $otherItemId)
     {
         $this->validateMove($itemId, $otherItemId);
 
@@ -360,7 +365,7 @@ class ItemStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function moveToRoot($itemId)
+    public function moveToRoot(int $itemId)
     {
         $menuId = $this->getMenuIdFor($itemId);
 
@@ -388,7 +393,7 @@ class ItemStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function moveAfter($itemId, $otherItemId)
+    public function moveAfter(int $itemId, int $otherItemId)
     {
         list(,, $parentId, $weight) = $this->validateMove($itemId, $otherItemId);
 
@@ -433,7 +438,7 @@ class ItemStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function moveBefore($itemId, $otherItemId)
+    public function moveBefore(int $itemId, int $otherItemId)
     {
         list(,, $parentId, $weight) = $this->validateMove($itemId, $otherItemId);
 
@@ -478,7 +483,7 @@ class ItemStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function delete($itemId)
+    public function delete(int $itemId)
     {
         $this
             ->database

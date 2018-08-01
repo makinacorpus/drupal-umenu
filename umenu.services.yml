@@ -1,47 +1,47 @@
 services:
 
-  # Menu storage
-  umenu.menu_storage.drupal:
-    public: false
-    class: MakinaCorpus\Umenu\MenuStorage
-    arguments: ["@database", "@event_dispatcher"]
-  umenu.menu_storage:
-    alias: umenu.menu_storage.drupal
+    # Menu storage
+    umenu.menu_storage.drupal:
+        public: false
+        class: MakinaCorpus\Umenu\MenuStorage
+        arguments: ["@database", "@event_dispatcher"]
+    umenu.menu_storage:
+        alias: umenu.menu_storage.drupal
 
-  # Item storages definition
-  umenu.item_storage.default:
-    public: false
-    class: MakinaCorpus\Umenu\ItemStorage
-    arguments: ["@database"]
-  umenu.item_storage.legacy:
-    public: false
-    class: MakinaCorpus\Umenu\Legacy\LegacyItemStorage
-    arguments: ["@database"]
-  umenu.item_storage:
-    alias: umenu.item_storage.default
+    # Item storages definition
+    umenu.item_storage.default:
+        public: false
+        class: MakinaCorpus\Umenu\ItemStorage
+        arguments: ["@database"]
+    umenu.item_storage.legacy:
+        public: false
+        class: MakinaCorpus\Umenu\Legacy\LegacyItemStorage
+        arguments: ["@database"]
+    umenu.item_storage:
+        alias: umenu.item_storage.default
 
-  # Proxify the item storage using a cache aware proxy
-  umenu.item_storage.cache_aware:
-    public: false
-    class: MakinaCorpus\Umenu\CachedItemStorageProxy
-    decorates: umenu.item_storage
-    arguments: ['@umenu.item_storage.cache_aware.inner', '@cache.default']
+    # Proxify the item storage using a cache aware proxy
+    umenu.item_storage.cache_aware:
+        public: false
+        class: MakinaCorpus\Umenu\CachedItemStorageProxy
+        decorates: umenu.item_storage
+        arguments: ['@umenu.item_storage.cache_aware.inner', '@cache.default']
 
-  # Tree builders definitions
-  umenu.tree_provider.default:
-    public: false
-    class: MakinaCorpus\Umenu\TreeProvider
-    calls: [[setCacheBackend, ['@cache.default']]]
-    arguments: ['@database']
-  umenu.tree_provider.legacy:
-    public: false
-    class: MakinaCorpus\Umenu\Legacy\LegacyTreeProvider
-    calls: [[setCacheBackend, ['@cache.default']]]
-    arguments: ['@database']
-  umenu.tree_provider:
-    alias: umenu.tree_provider.default
+    # Tree builders definitions
+    umenu.tree_provider.default:
+        public: false
+        class: MakinaCorpus\Umenu\TreeProvider
+        calls: [[setCacheBackend, ['@cache.default']]]
+        arguments: ['@database']
+    umenu.tree_provider.legacy:
+        public: false
+        class: MakinaCorpus\Umenu\Legacy\LegacyTreeProvider
+        calls: [[setCacheBackend, ['@cache.default']]]
+        arguments: ['@database']
+    umenu.tree_provider:
+        alias: umenu.tree_provider.default
 
-  # For your own very pleasure in order to reduce your object dependencies
-  umenu.manager:
-    class: MakinaCorpus\Umenu\TreeManager
-    arguments: ['@umenu.menu_storage', '@umenu.item_storage', '@umenu.tree_provider', '@current_user']
+    # For your own very pleasure in order to reduce your object dependencies
+    umenu.manager:
+        class: MakinaCorpus\Umenu\TreeManager
+        arguments: ['@umenu.menu_storage', '@umenu.item_storage', '@umenu.tree_provider', '@current_user']

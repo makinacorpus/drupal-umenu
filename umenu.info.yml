@@ -1,0 +1,8 @@
+name: µMenu
+type: module
+description: Drupal core menu module replacement that does not attach to node types
+core: 8.x
+package: Utility
+php: 7
+# @todo restore PluSQL dependency
+dependencies: []

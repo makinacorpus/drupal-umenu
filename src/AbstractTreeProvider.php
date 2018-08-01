@@ -3,6 +3,7 @@
 namespace MakinaCorpus\Umenu;
 
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Database\Connection;
 
 /**
  * Loads trees.
@@ -16,25 +17,21 @@ use Drupal\Core\Cache\CacheBackendInterface;
  */
 abstract class AbstractTreeProvider implements TreeProviderInterface
 {
-    private $db;
+    private $database;
     private $cache;
     private $perNodeTree = [];
     private $loadedTrees = [];
 
     /**
      * Default constructor, do not ommit it!
-     *
-     * @param \DatabaseConnection $db
      */
-    public function __construct(\DatabaseConnection $db)
+    public function __construct(Connection $database)
     {
-        $this->db = $db;
+        $this->database = $database;
     }
 
     /**
      * Allow tree cache
-     *
-     * @param CacheBackendInterface $cache
      */
     public function setCacheBackend(CacheBackendInterface $cache)
     {
@@ -48,33 +45,32 @@ abstract class AbstractTreeProvider implements TreeProviderInterface
      *
      * @return TreeItem[]
      */
-    abstract protected function loadTreeItems($menuId);
+    abstract protected function loadTreeItems(int $menuId): array;
 
     /**
      * Load tree items
      *
      * @param int $nodeId
-     *   Conditions that applies to the menu storage
      * @param mixed[] $conditions
      *   Conditions that applies to the menu storage
      *
      * @return string[]
      *   List of menu identifiers
      */
-    abstract protected function findAllMenuFor($nodeId, array $conditions = []);
+    abstract protected function findAllMenuFor(int $nodeId, array $conditions = []): array;
 
     /**
-     * @return \DatabaseConnection
+     * Get database connection
      */
-    final protected function getDatabase()
+    final protected function getDatabase(): Connection
     {
-        return $this->db;
+        return $this->database;
     }
 
     /**
      * @inheritdoc
      */
-    public function mayCloneTree()
+    public function mayCloneTree(): bool
     {
         return false;
     }
@@ -82,7 +78,7 @@ abstract class AbstractTreeProvider implements TreeProviderInterface
     /**
      * @inheritdoc
      */
-    public function cloneTreeIn($menuId, Tree $tree)
+    public function cloneTreeIn($menuId, Tree $tree): Tree
     {
         throw new \LogicException("This tree provider implementation cannot clone trees");
     }
@@ -93,16 +89,14 @@ abstract class AbstractTreeProvider implements TreeProviderInterface
     public function findTreeForNode($nodeId, array $conditions = [])
     {
         // Not isset() here because result can null (no tree found)
-        if (array_key_exists($nodeId, $this->perNodeTree)) {
+        if (\array_key_exists($nodeId, $this->perNodeTree)) {
             return $this->perNodeTree[$nodeId];
         }
 
-        $menuIdList = $this->findAllMenuFor($nodeId, $conditions);
-
-        if ($menuIdList) {
+        if ($menuIdList = $this->findAllMenuFor($nodeId, $conditions)) {
             // Arbitrary take the first
             // @todo later give more control to this for users
-            return $this->perNodeTree[$nodeId] = reset($menuIdList);
+            return $this->perNodeTree[$nodeId] = \reset($menuIdList);
         }
 
         $this->perNodeTree[$nodeId] = null;
@@ -111,12 +105,8 @@ abstract class AbstractTreeProvider implements TreeProviderInterface
     /**
      * @inheritdoc
      */
-    final public function buildTree($menuId, $withAccess = false, $userId = null, $relocateOrphans = false)
+    final public function buildTree($menuId, $withAccess = false, $userId = null, $relocateOrphans = false, $resetCache = false): Tree
     {
-        if ($withAccess && null === $userId) {
-            throw new \InvalidArgumentException("loading menu with access checks needs the user identifier");
-        }
-
         $doCache = false;
         $cacheId = null;
 
@@ -147,7 +137,7 @@ abstract class AbstractTreeProvider implements TreeProviderInterface
                     ->getDatabase()
                     ->select('node', 'n')
                     ->fields('n', ['nid', 'nid'])
-                    ->condition('n.nid', $nodeMap)
+                    ->condition('n.nid', $nodeMap, 'IN')
                     ->condition('n.status', 1)
                     ->addTag('node_access')
                     ->execute()

@@ -10,7 +10,7 @@ class TreeProvider extends AbstractTreeProvider
     /**
      * {@inheritdoc}
      */
-    protected function loadTreeItems($menuId)
+    protected function loadTreeItems(int $menuId): array
     {
         // We need a nice SQL query, that will fetch everything at once.
         $r = $this
@@ -38,7 +38,7 @@ class TreeProvider extends AbstractTreeProvider
     /**
      * {@inheritdoc}
      */
-    protected function findAllMenuFor($nodeId, array $conditions = [])
+    protected function findAllMenuFor(int $nodeId, array $conditions = []): array
     {
 
         $query = $this

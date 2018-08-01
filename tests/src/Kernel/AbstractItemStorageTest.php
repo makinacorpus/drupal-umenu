@@ -1,53 +1,83 @@
 <?php
 
-namespace MakinaCorpus\Umenu\Tests;
+namespace Drupal\Tests\umenu\Kernel;
 
-use Drupal\user\User;
-use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
-use MakinaCorpus\Ucms\Site\Tests\SiteTestTrait;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\KernelTests\KernelTestBase;
+use Drupal\node\NodeInterface;
 use MakinaCorpus\Umenu\ItemStorageInterface;
 use MakinaCorpus\Umenu\MenuStorageInterface;
 use MakinaCorpus\Umenu\TreeBase;
 use MakinaCorpus\Umenu\TreeManager;
 use MakinaCorpus\Umenu\TreeProviderInterface;
 
-abstract class AbstractItemStorageTest extends AbstractDrupalTest
+/**
+ * Item storage test unit testing.
+ *
+ * @group umenu_abstract
+ */
+abstract class AbstractItemStorageTest extends KernelTestBase
 {
-    use SiteTestTrait; // @todo
+    public static $modules = ['system', 'user', 'node', 'umenu'];
 
-    private $menus;
+    abstract protected function getItemStorage(): ItemStorageInterface;
 
-    protected function tearDown()
+    abstract protected function getMenuStorage(): MenuStorageInterface;
+
+    abstract protected function getTreeProvider(): TreeProviderInterface;
+
+    protected function createDrupalNode(string $title): NodeInterface
     {
-        if ($this->menus) {
-            foreach ($this->menus as $name) {
-                $this->getDatabaseConnection()->query("DELETE FROM {umenu} WHERE name = ?", [$name]);
-            }
-        }
+        /** @var \Drupal\Core\Entity\EntityTypeManager $entityTypeManager */
+        $entityTypeManager = $this->container->get('entity_type.manager');
+        $storage = $entityTypeManager->getStorage('node');
 
-        $this->getDatabaseConnection()->query("DELETE FROM {menu_links} WHERE menu_name NOT IN (SELECT name FROM {umenu})");
+        $node = $storage->create(['title' => $title, 'type' => 'page']);
+        $storage->save($node);
 
-        $this->eraseAllData();
+        return $node;
+    }
 
-        parent::tearDown();
+    protected function createDrupalUser(): AccountInterface
+    {
+        /** @var \Drupal\Core\Entity\EntityTypeManager $entityTypeManager */
+        $entityTypeManager = $this->container->get('entity_type.manager');
+        $storage = $entityTypeManager->getStorage('user');
+
+        $user = $storage->create(['name' => "Bond, James Bond"]);
+        $storage->save($user);
+
+        return $user;
+    }
+
+    protected function getDatabaseConnection(): Connection
+    {
+        return $this->container->get('database');
     }
 
     /**
-     * @return ItemStorageInterface
+     * {@inheritdoc}
      */
-    abstract protected function getItemStorage();
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->installEntitySchema('user');
+        $this->installEntitySchema('node');
+        $this->installSchema('system', ['sequences']);
+        $this->installSchema('umenu', ['umenu', 'umenu_item']);
+    }
 
     /**
-     * @return MenuStorageInterface
+     * {@inheritdoc}
      */
-    abstract protected function getMenuStorage();
+    protected function tearDown()
+    {
+        parent::tearDown();
+    }
 
-    /**
-     * @return TreeProviderInterface
-     */
-    abstract protected function getTreeProvider();
-
-    protected function recursiveBuildArray(TreeBase $item)
+    protected function recursiveBuildArray(TreeBase $item): array
     {
         $ret = [];
 
@@ -60,7 +90,7 @@ abstract class AbstractItemStorageTest extends AbstractDrupalTest
         return $ret;
     }
 
-    protected function recursiveBuildArrayWithoutId(TreeBase $item)
+    protected function recursiveBuildArrayWithoutId(TreeBase $item): array
     {
         $ret = [];
 
@@ -79,8 +109,8 @@ abstract class AbstractItemStorageTest extends AbstractDrupalTest
         $menuStorage = $this->getMenuStorage();
         $itemStorage = $this->getItemStorage();
 
-        $site = $this->createDrupalSite();
-        $menu = $menuStorage->create($this->menus[] = uniqid('test_item_storage'));
+        $site = null; // $this->createDrupalSite();
+        $menu = $menuStorage->create(\uniqid('test_item_storage'));
         $menuId = $menu->getId();
 
         /*
@@ -160,11 +190,11 @@ abstract class AbstractItemStorageTest extends AbstractDrupalTest
          * Go for clone test, now that we do have something
          */
 
-        $newSite = $this->createDrupalSite();
-        $otherMenu = $menuStorage->create($this->menus[] = uniqid('test_item_storage'), ['site_id' => $newSite->getId()]);
+        $newSite = null; // $this->createDrupalSite();
+        $newSiteId = 1; // $newSite->getId();
+        $otherMenu = $menuStorage->create(\uniqid('test_item_storage'), ['site_id' => $newSiteId]);
         $tree = $provider->buildTree($menu->getId());
-        $newSiteId = $newSite->getId();
-        $manager = new TreeManager($menuStorage, $itemStorage, $provider, new User());
+        $manager = new TreeManager($menuStorage, $itemStorage, $provider, $this->createDrupalUser());
         $newTree = $manager->cloneTreeIn($otherMenu->getId(), $tree);
 
         $actual = $this->recursiveBuildArrayWithoutId($newTree);
@@ -188,9 +218,9 @@ abstract class AbstractItemStorageTest extends AbstractDrupalTest
          * And another clone test
          */
 
-        $otherSite = $this->createDrupalSite();
-        $otherSiteId = $otherSite->getId();
-        $otherTree = $manager->cloneMenu($menuId, $otherSite->getId(), $this->menus[] = uniqid('test_item_storage'));
+        $otherSite = null; // $this->createDrupalSite();
+        $otherSiteId = 2; // $otherSite->getId();
+        $otherTree = $manager->cloneMenu($menuId, $otherSiteId, \uniqid('test_item_storage'));
 
         $actual = $this->recursiveBuildArrayWithoutId($otherTree);
         $expected = [
@@ -216,8 +246,8 @@ abstract class AbstractItemStorageTest extends AbstractDrupalTest
         $menuStorage = $this->getMenuStorage();
         $itemStorage = $this->getItemStorage();
 
-        $site = $this->createDrupalSite();
-        $menu = $menuStorage->create($this->menus[] = uniqid('test_item_storage'));
+        $site = null; // $this->createDrupalSite();
+        $menu = $menuStorage->create(\uniqid('test_item_storage'));
         $menuId = $menu->getId();
 
         /*

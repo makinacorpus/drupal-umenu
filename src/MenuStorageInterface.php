@@ -23,16 +23,16 @@ interface MenuStorageInterface
      * @throws \InvalidArgumentException
      *   If the menu does not exist
      */
-    public function load($name);
+    public function load($name): Menu;
 
     /**
      * Check that a menu definition exists
      *
      * @param string $name
      *
-     * @return boolean
+     * @return bool
      */
-    public function exists($name);
+    public function exists($name): bool;
 
     /**
      * Load multiple menu definitions
@@ -42,7 +42,7 @@ interface MenuStorageInterface
      * @return Menu[]
      *   Same as load() but an array of it
      */
-    public function loadMultiple($nameList);
+    public function loadMultiple(array $nameList): array;
 
     /**
      * Find one or more instances by condition
@@ -56,7 +56,7 @@ interface MenuStorageInterface
      * @return Menu[]
      *   Same as load() but an array of it
      */
-    public function loadWithConditions($conditions, $mainFirst = true);
+    public function loadWithConditions(array $conditions, bool $mainFirst = true): array;
 
     /**
      * Delete a single menu definition
@@ -90,7 +90,7 @@ interface MenuStorageInterface
      * @param string $role
      *   Arbitrary new role (could be anything this API does not care) may be null
      */
-    public function toggleRole($name, $role);
+    public function toggleRole($name, string $role);
 
     /**
      * Set main menu status of the given menu
@@ -106,7 +106,7 @@ interface MenuStorageInterface
      * @throws \LogicException
      *   If the menu is not attached to a site
      */
-    public function toggleMainStatus($name, $toggle = true);
+    public function toggleMainStatus($name, bool $toggle = true);
 
     /**
      * Insert a single menu definition
@@ -122,7 +122,7 @@ interface MenuStorageInterface
      * @throws \InvalidArgumentException
      *   If the menu already does exist
      */
-    public function create($name, array $values = []);
+    public function create($name, array $values = []): Menu;
 
     /**
      * Drop all caches
