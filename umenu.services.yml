@@ -45,3 +45,10 @@ services:
     umenu.manager:
         class: MakinaCorpus\Umenu\TreeManager
         arguments: ['@umenu.menu_storage', '@umenu.item_storage', '@umenu.tree_provider', '@current_user']
+
+    # And go for Drupal plug
+    umenu.breadcrumb_builder:
+        public: false
+        class: MakinaCorpus\Umenu\TreeBreadcrumbBuilder
+        arguments: ['@event_dispatcher', '@request_stack', '@umenu.manager']
+        tags: [{name: breadcrumb_builder, priority: 2048}]

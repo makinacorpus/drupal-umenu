@@ -135,7 +135,7 @@ abstract class AbstractTreeProvider implements TreeProviderInterface
             if (!empty($nodeMap)) {
                 $allowed = $this
                     ->getDatabase()
-                    ->select('node', 'n')
+                    ->select('node_field_data', 'n')
                     ->fields('n', ['nid', 'nid'])
                     ->condition('n.nid', $nodeMap, 'IN')
                     ->condition('n.status', 1)
