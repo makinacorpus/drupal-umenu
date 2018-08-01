@@ -148,3 +148,20 @@ function umenu_schema() {
 
   return $schema;
 }
+
+/**
+ * Insert default Drupal menu because they are hardcoded in too many places.
+ */
+function umenu_install_default_menus() {
+  foreach (['main'] as $name) {
+    db_merge('umenu')->key(['name' => $name, 'title' => $name])->execute();
+  }
+}
+
+/**
+ * Implements hook_install().
+ */
+function umenu_install() {
+  umenu_install_default_menus();
+}
+
