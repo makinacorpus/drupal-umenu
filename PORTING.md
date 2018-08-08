@@ -3,3 +3,4 @@
 ## Minimal viable product
 
  - Restore SQL constraints
+ - Restore theme function for menus
