@@ -5,9 +5,9 @@
       {% for item in tree.children %}
         <li>
           {% if item.isInTrailOf(current) %}
-            <a class="active" href="{{ url(item.route) }}">{{ item.title }}</a>{{ umenu.tree(item, current) }}
+            <a class="active" href="{{ url(item.route, item.routeParameters) }}">{{ item.title }}</a>{{ umenu.tree(item, current) }}
           {% else %}
-            <a href="{{ url(item.route) }}">{{ item.title }}</a>{{ umenu.tree(item, current) }}
+            <a href="{{ url(item.route, item.routeParameters) }}">{{ item.title }}</a>{{ umenu.tree(item, current) }}
           {% endif %}
         </li>
       {% endfor %}

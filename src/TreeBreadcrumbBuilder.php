@@ -6,10 +6,10 @@ use Drupal\Core\Link;
 use Drupal\Core\Breadcrumb\Breadcrumb;
 use Drupal\Core\Breadcrumb\BreadcrumbBuilderInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\node\NodeInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 class TreeBreadcrumbBuilder implements BreadcrumbBuilderInterface
 {
@@ -81,7 +81,6 @@ class TreeBreadcrumbBuilder implements BreadcrumbBuilderInterface
             return $ret;
         }
 
-        // @todo cacheability
         if ($items = $this->treeManager->buildTree($menuId, true)->getMostRevelantTrailForNode($nodeId)) {
             foreach ($items as $item) {
                 $itemNodeId = $item->getNodeId();

@@ -59,7 +59,12 @@ final class TreeItem extends TreeBase
 
     public function getRoute()
     {
-        return 'node/' . $this->node_id;
+        return 'entity.node.canonical';
+    }
+
+    public function getRouteParameters()
+    {
+        return ['node' => $this->node_id];
     }
 
     public function getDepth()

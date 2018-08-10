@@ -78,6 +78,7 @@ final class Tree extends TreeBase
 
         foreach ($this->children as $item) {
             $parentId = $item->getParentId();
+            $itemId = $item->getId();
 
             if (!$parentId) {
                 $this->topLevel[] = $item;
@@ -87,20 +88,20 @@ final class Tree extends TreeBase
                 } else {
                     // Item is orphan and we don't relocate orphan, we must
                     // exclude this item from tree
-                    unset($this->children[$item->getId()]);
+                    unset($this->children[$itemId]);
                     continue;
                 }
             } else {
                 // Build the tree by adding the child to its parent, this is
                 // allowed because both this class and the TreeItem class are
                 // extending the TreeBase class, and properties are protected.
-                $this->children[$parentId]->children[$item->getId()] = $item;
+                $this->children[$parentId]->children[$itemId] = $item;
             }
 
             // And we need to be able to fetch those per node too.
             $nodeId = $item->getNodeId();
             if ($nodeId) {
-                $this->perNode[$nodeId][] = $item;
+                $this->perNode[$nodeId][$itemId] = $item;
             }
         }
     }

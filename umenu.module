@@ -3,100 +3,36 @@
  * µMenu module.
  */
 
-use MakinaCorpus\Umenu\MenuStorageInterface;
-use MakinaCorpus\Umenu\TreeManager;
-
-/**
- * Get menu storage service
- *
- * @deprecated
- */
-function umenu_get_storage(): MenuStorageInterface {
-  return \Drupal::service('umenu.menu_storage');
-}
-
-/**
- * Get the tree manager service
- *
- * @deprecated
- */
-function umenu_get_manager(): TreeManager {
-  return \Drupal::service('umenu.manager');
-}
-
-/**
- * Implements hook_page_build().
- */
-function umenu_page_build(&$page) {
-  return;
-  /*
-  // Overrides Drupal breadcrumb to match our custom menu trees if any.
-  // We are doing it very early, it might be useless, but in most cases
-  // it will be, and it will also prepoluate a few menu caches.
-  // On the other hand, use using hook_page_build() ensures that we are
-  // actually displaying a page, so the breadcrumb will be used.
-  if ($node = menu_get_object()) {
-    $manager = umenu_get_manager();
-    $menu = $manager->findTreeForNode($node->nid);
-    if ($menu) {
-      $trail = $menu->getMostRevelantTrailForNode($node->nid);
-      // We have a menu, and a trail, build the breadcrumb and pollute
-      // Drupal own cache to make it believe it did load it.s
-      if ($trail) {
-        $breadcrumb = [];
-        foreach ($trail as $item) {
-          if ($item->getNodeId() != $node->nid) {
-            $breadcrumb[] = l($item->getTitle(), $item->getRoute());
-          }
-        }
-        drupal_set_breadcrumb($breadcrumb);
-      }
-    }
-  }
-   */
-}
-
-/**
- * Menu load callback
- *
-function umenu_load($id) {
-  try {
-    return umenu_get_storage()->load($id);
-  } catch (\InvalidArgumentException $e) {}
-  return false;
-}
- */
-
 /**
  * Implements hook_theme().
- *
+ */
 function umenu_theme() {
   return [
     'umenu' => [
       'variables' => ['tree' => null, 'name' => null, 'current' => null],
-      'template' => 'views/umenu',
+      'template' => 'umenu',
     ],
   ];
 }
- */
 
 /**
  * Implements template_preprocess_HOOK().
- *
-function template_preprocess_umenu(&$variables, $hook) {
+ */
+function template_preprocess_umenu(&$variables) {
   if (isset($variables['name'])) {
     $variables['theme_hook_suggestions'][] = 'umenu__' . str_replace('-', '_', $variables['name']);
   }
+  /*
   if ($hook !== $variables['theme_hook_original']) {
     $variables['theme_hook_suggestions'][] = $variables['theme_hook_original'];
     if (isset($variables['name'])) {
       $variables['theme_hook_suggestions'][] = $variables['theme_hook_original'] . '__' . str_replace('-', '_', $variables['name']);
     }
   }
+   */
   if (!isset($variables['current'])) {
-    if ($node = menu_get_object()) {
+    /* if ($node = menu_get_object()) {
       $variables['current'] = $node->nid;
-    }
+    } */
   }
 }
- */
