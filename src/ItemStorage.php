@@ -141,7 +141,7 @@ class ItemStorage implements ItemStorageInterface
         $weight = (int)$this
             ->database
             ->query(
-                "SELECT MAX(weight) + 1 FROM {umenu_item} WHERE menu_id = ? AND parent_id IS NULL",
+                "SELECT MAX(weight) + 1 FROM {umenu_item} WHERE menu_id = ? AND (parent_id IS NULL OR parent_id = 0)",
                 [$menuId]
             )
             ->fetchField()
@@ -218,7 +218,7 @@ class ItemStorage implements ItemStorageInterface
             $this
                 ->database
                 ->query(
-                    "UPDATE {umenu_item} SET weight = weight + 2 WHERE parent_id IS NULL AND id <> :id AND weight >= :weight",
+                    "UPDATE {umenu_item} SET weight = weight + 2 WHERE (parent_id IS NULL OR parent_id = 0) AND id <> :id AND weight >= :weight",
                     [
                         ':id'     => $otherItemId,
                         ':weight' => $weight,
@@ -266,7 +266,7 @@ class ItemStorage implements ItemStorageInterface
             $this
                 ->database
                 ->query(
-                    "UPDATE {umenu_item} SET weight = weight - 2 WHERE parent_id IS NULL AND id <> :id AND weight <= :weight",
+                    "UPDATE {umenu_item} SET weight = weight - 2 WHERE (parent_id IS NULL OR parent_id = 0) AND id <> :id AND weight <= :weight",
                     [
                         ':id'     => $otherItemId,
                         ':weight' => $weight,
@@ -372,7 +372,7 @@ class ItemStorage implements ItemStorageInterface
         $weight = (int)$this
             ->database
             ->query(
-                "SELECT MAX(weight) + 1 FROM {umenu_item} WHERE parent_id = 0 AND menu_id = ?",
+                "SELECT MAX(weight) + 1 FROM {umenu_item} WHERE (parent_id IS NULL OR parent_id = 0) AND menu_id = ?",
                 [$menuId]
             )
             ->fetchField()
@@ -413,7 +413,7 @@ class ItemStorage implements ItemStorageInterface
             $this
                 ->database
                 ->query(
-                    "UPDATE {umenu_item} SET weight = weight + 2 WHERE parent_id IS NULL AND id <> :id AND weight >= :weight",
+                    "UPDATE {umenu_item} SET weight = weight + 2 WHERE (parent_id IS NULL OR parent_id = 0) AND id <> :id AND weight >= :weight",
                     [
                         ':id'     => $otherItemId,
                         ':weight' => $weight,
@@ -458,7 +458,7 @@ class ItemStorage implements ItemStorageInterface
             $this
                 ->database
                 ->query(
-                    "UPDATE {umenu_item} SET weight = weight - 2 WHERE parent_id IS NULL AND id <> :id AND weight <= :weight",
+                    "UPDATE {umenu_item} SET weight = weight - 2 WHERE (parent_id IS NULL OR parent_id = 0) AND id <> :id AND weight <= :weight",
                     [
                         ':id'     => $otherItemId,
                         ':weight' => $weight - 1,
