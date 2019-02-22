@@ -14,7 +14,7 @@ class ItemStorage implements ItemStorageInterface
         $this->database = $database;
     }
 
-    protected function validateMenu($menuId, $title, $nodeId)
+    protected function validateMenu($menuId, $title, $nodeId, $url)
     {
         if (empty($menuId)) {
             throw new \InvalidArgumentException("Menu identifier cannot be empty");
@@ -22,8 +22,8 @@ class ItemStorage implements ItemStorageInterface
         if (empty($title)) {
             throw new \InvalidArgumentException("Title cannot be empty");
         }
-        if (empty($nodeId)) {
-            throw new \InvalidArgumentException("Node identifier cannot be empty");
+        if (empty($nodeId) && empty($url)) {
+            throw new \InvalidArgumentException("Node identifier and URL cannot be both empty cannot be empty");
         }
 
         $values = $this
@@ -39,7 +39,7 @@ class ItemStorage implements ItemStorageInterface
         return array_values($values);
     }
 
-    protected function validateItem($otherItemId, $title, $nodeId)
+    protected function validateItem($otherItemId, $title, $nodeId, $url)
     {
         if (empty($otherItemId)) {
             throw new \InvalidArgumentException("Relative item identifier cannot be empty");
@@ -47,8 +47,8 @@ class ItemStorage implements ItemStorageInterface
         if (empty($title)) {
             throw new \InvalidArgumentException("Title cannot be empty");
         }
-        if (empty($nodeId)) {
-            throw new \InvalidArgumentException("Node identifier cannot be empty");
+        if (empty($nodeId) && empty($url)) {
+            throw new \InvalidArgumentException("Node identifier and URL cannot be both empty cannot be empty");
         }
 
         // Find parent identifier
@@ -129,9 +129,9 @@ class ItemStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function insert($menuId, $nodeId, $title, $description = null)
+    public function insert($menuId, $nodeId, $title, $description = null, $url = null)
     {
-        list($menuId, $siteId) = $this->validateMenu($menuId, $title, $nodeId);
+        list($menuId, $siteId) = $this->validateMenu($menuId, $title, $nodeId, $url);
 
         $weight = (int)$this
             ->database
@@ -153,6 +153,7 @@ class ItemStorage implements ItemStorageInterface
                 'weight'      => $weight,
                 'title'       => $title,
                 'description' => $description,
+                'url'         => $url,
             ])
             ->execute()
         ;
@@ -161,9 +162,9 @@ class ItemStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function insertAsChild($otherItemId, $nodeId, $title, $description = null)
+    public function insertAsChild($otherItemId, $nodeId, $title, $description = null, $url = null)
     {
-        list($menuId, $siteId) = $this->validateItem($otherItemId, $title, $nodeId);
+        list($menuId, $siteId) = $this->validateItem($otherItemId, $title, $nodeId, $url);
 
         $weight = (int)$this
             ->database
@@ -185,6 +186,7 @@ class ItemStorage implements ItemStorageInterface
                 'weight'      => $weight,
                 'title'       => $title,
                 'description' => $description,
+                'url'         => $url,
             ])
             ->execute()
         ;
@@ -193,9 +195,9 @@ class ItemStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function insertAfter($otherItemId, $nodeId, $title, $description = null)
+    public function insertAfter($otherItemId, $nodeId, $title, $description = null, $url = null)
     {
-        list($menuId, $siteId, $parentId, $weight) = $this->validateItem($otherItemId, $title, $nodeId);
+        list($menuId, $siteId, $parentId, $weight) = $this->validateItem($otherItemId, $title, $nodeId, $url);
 
         if ($parentId) {
             $this
@@ -233,6 +235,7 @@ class ItemStorage implements ItemStorageInterface
                 'weight'      => $weight + 1,
                 'title'       => $title,
                 'description' => $description,
+                'url'         => $url,
             ])
             ->execute()
         ;
@@ -241,9 +244,9 @@ class ItemStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function insertBefore($otherItemId, $nodeId, $title, $description = null)
+    public function insertBefore($otherItemId, $nodeId, $title, $description = null, $url = null)
     {
-        list($menuId, $siteId, $parentId, $weight) = $this->validateItem($otherItemId, $title, $nodeId);
+        list($menuId, $siteId, $parentId, $weight) = $this->validateItem($otherItemId, $title, $nodeId, $url);
 
         if ($parentId) {
             $this
@@ -281,6 +284,7 @@ class ItemStorage implements ItemStorageInterface
                 'weight'      => $weight - 1,
                 'title'       => $title,
                 'description' => $description,
+                'url'         => $url,
             ])
             ->execute()
         ;
@@ -289,7 +293,7 @@ class ItemStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function update($itemId, $nodeId = null, $title = null, $description = null)
+    public function update($itemId, $nodeId = null, $title = null, $description = null, $url = null)
     {
         $exists = (bool)$this
             ->database
@@ -313,6 +317,9 @@ class ItemStorage implements ItemStorageInterface
         }
         if (null !== $description) {
             $values['description'] = $description;
+        }
+        if (null !== $url) {
+            $values['url'] = $url;
         }
 
         if (empty($values)) {

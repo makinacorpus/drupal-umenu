@@ -59,9 +59,9 @@ class CachedItemStorageProxy implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function insert($menuId, $nodeId, $title, $description = null)
+    public function insert($menuId, $nodeId, $title, $description = null, $url = null)
     {
-        $ret = $this->nested->insert($menuId, $nodeId, $title, $description);
+        $ret = $this->nested->insert($menuId, $nodeId, $title, $description, $url);
         $this->cache->delete($this->getCacheId($menuId));
 
         return $ret;
@@ -70,9 +70,9 @@ class CachedItemStorageProxy implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function insertAsChild($otherItemId, $nodeId, $title, $description = null)
+    public function insertAsChild($otherItemId, $nodeId, $title, $description = null, $url = null)
     {
-        $ret = $this->nested->insertAsChild($otherItemId, $nodeId, $title, $description);
+        $ret = $this->nested->insertAsChild($otherItemId, $nodeId, $title, $description, $url);
         $this->cache->delete($this->getCacheIdFrom($otherItemId));
 
         return $ret;
@@ -81,9 +81,9 @@ class CachedItemStorageProxy implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function insertAfter($otherItemId, $nodeId, $title, $description = null)
+    public function insertAfter($otherItemId, $nodeId, $title, $description = null, $url = null)
     {
-        $ret = $this->nested->insertAfter($otherItemId, $nodeId, $title, $description);
+        $ret = $this->nested->insertAfter($otherItemId, $nodeId, $title, $description, $url);
         $this->cache->delete($this->getCacheIdFrom($otherItemId));
 
         return $ret;
@@ -92,9 +92,9 @@ class CachedItemStorageProxy implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function insertBefore($otherItemId, $nodeId, $title, $description = null)
+    public function insertBefore($otherItemId, $nodeId, $title, $description = null, $url = null)
     {
-        $ret = $this->nested->insertBefore($otherItemId, $nodeId, $title, $description);
+        $ret = $this->nested->insertBefore($otherItemId, $nodeId, $title, $description, $url);
         $this->cache->delete($this->getCacheIdFrom($otherItemId));
 
         return $ret;
@@ -103,9 +103,9 @@ class CachedItemStorageProxy implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function update($itemId, $nodeId = null, $title = null, $description = null)
+    public function update($itemId, $nodeId = null, $title = null, $description = null, $url = null)
     {
-        $ret = $this->nested->update($itemId, $nodeId, $title, $description);
+        $ret = $this->nested->update($itemId, $nodeId, $title, $description, $url);
         $this->cache->delete($this->getCacheIdFrom($itemId));
 
         return $ret;

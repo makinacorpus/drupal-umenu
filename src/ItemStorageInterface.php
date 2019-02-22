@@ -20,59 +20,64 @@ interface ItemStorageInterface
      * Append new item within menu
      *
      * @param int $menuId
-     * @param int $nodeId
+     * @param ?int $nodeId
      * @param string $title
-     * @param string $description
+     * @param ?string $description
+     * @param ?string $url
      *
      * @return int
      */
-    public function insert($menuId, $nodeId, $title, $description = null);
+    public function insert($menuId, $nodeId, $title, $description = null, $url = null);
 
     /**
      * Append new item as child of the selected item
      *
      * @param int $otherItemId
-     * @param int $nodeId
+     * @param ?int $nodeId
      * @param string $title
-     * @param string $description
+     * @param ?string $description
+     * @param ?string $url
      *
      * @return int
      */
-    public function insertAsChild($otherItemId, $nodeId, $title, $description = null);
+    public function insertAsChild($otherItemId, $nodeId, $title, $description = null, $url = null);
 
     /**
      * Insert item after another
      *
      * @param int $otherItemId
-     * @param int $nodeId
+     * @param ?int $nodeId
      * @param string $title
-     * @param string $description
+     * @param ?string $description
+     * @param ?string $url
      *
      * @return int
      */
-    public function insertAfter($otherItemId, $nodeId, $title, $description = null);
+    public function insertAfter($otherItemId, $nodeId, $title, $description = null, $url = null);
 
     /**
      * Insert item before another
      *
      * @param int $otherItemId
-     * @param int $nodeId
+     * @param ?int $nodeId
      * @param string $title
-     * @param string $description
+     * @param ?string $description
+     * @param ?string $url
      *
      * @return int
      */
-    public function insertBefore($otherItemId, $nodeId, $title, $description = null);
+    public function insertBefore($otherItemId, $nodeId, $title, $description = null, $url = null);
 
     /**
      * Update item
      *
      * @param int $itemId
-     * @param int $nodeId
+     * @param ?int $nodeId
      * @param string $title
-     * @param string $description
+     * @param ?string $description
+     * @param ?string $url
      */
-    public function update($itemId, $nodeId = null, $title = null, $description = null);
+    public function update($itemId, $nodeId = null, $title = null, $description = null, $url = null);
 
     /**
      * Reparent item

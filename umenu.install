@@ -95,7 +95,7 @@ function umenu_schema() {
         'description' => 'Node (content) identifier',
         'type'        => 'int',
         'unsigned'    => true,
-        'not null'    => true,
+        'not null'    => false,
       ],
       'parent_id' => [
         'description' => 'Parent identifier refering to this table primary key',
@@ -120,6 +120,12 @@ function umenu_schema() {
       ],
       'description' => [
         'description' => 'Menu item description, may be used for display.',
+        'type'        => 'text',
+        'not null'    => false,
+        'default'     => null,
+      ],
+      'url' => [
+        'description' => 'Link to use, note that will override the node one if any',
         'type'        => 'text',
         'not null'    => false,
         'default'     => null,
@@ -276,3 +282,24 @@ function umenu_update_7008() {
 function umenu_update_7009() {
   db_constraint_fix('umenu');
 }
+
+/**
+ * Adds the {umenu_item}.url column and set the {umenu_item}.node_id nullable.
+ */
+function umenu_update_7012() {
+  db_change_field('umenu_item', 'node_id', 'node_id', [
+    'description' => 'Node (content) identifier',
+    'type'        => 'int',
+    'unsigned'    => true,
+    'not null'    => false,
+  ]);
+  if (!db_field_exists('umenu_item', 'url')) {
+    db_add_field('umenu_item', 'url', [
+      'description' => 'Link to use, note that will override the node one if any',
+      'type'        => 'text',
+      'not null'    => false,
+      'default'     => null,
+    ]);
+  }
+}
+

@@ -139,7 +139,9 @@ abstract class AbstractTreeProvider implements TreeProviderInterface
             $nodeMap = [];
 
             foreach ($items as $item) {
-                $nodeMap[] = $item->getNodeId();
+                if ($nodeId = $item->getNodeId()) {
+                    $nodeMap[] = $nodeId;
+                }
             }
 
             if (!empty($nodeMap)) {
@@ -155,7 +157,7 @@ abstract class AbstractTreeProvider implements TreeProviderInterface
                 ;
 
                 foreach ($items as $key => $item) {
-                    if (!isset($allowed[$item->getNodeId()])) {
+                    if (($nodeId = $item->getNodeId()) && !isset($allowed[$nodeId])) {
                         unset($items[$key]);
                     }
                 }

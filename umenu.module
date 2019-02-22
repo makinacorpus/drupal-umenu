@@ -46,7 +46,7 @@ function umenu_page_build(&$page) {
         $breadcrumb = [];
         foreach ($trail as $item) {
           if ($item->getNodeId() != $node->nid) {
-            $breadcrumb[] = l($item->getTitle(), $item->getRoute());
+            $breadcrumb[] = l($item->getTitle(), $item->getUrl() ?? $item->getRoute());
           }
         }
         drupal_set_breadcrumb($breadcrumb);

@@ -16,7 +16,7 @@ class LegacyItemStorage implements ItemStorageInterface
         $this->db = $db;
     }
 
-    protected function validateMenu($menuId, $title, $nodeId)
+    protected function validateMenu($menuId, $title, $nodeId, $url)
     {
         if (empty($menuId)) {
             throw new \InvalidArgumentException("Menu identifier cannot be empty");
@@ -24,8 +24,8 @@ class LegacyItemStorage implements ItemStorageInterface
         if (empty($title)) {
             throw new \InvalidArgumentException("Title cannot be empty");
         }
-        if (empty($nodeId)) {
-            throw new \InvalidArgumentException("Node identifier cannot be empty");
+        if (empty($nodeId) && empty($url)) {
+            throw new \InvalidArgumentException("Node identifier and URL cannot be both empty cannot be empty");
         }
 
         $menu = $this->db->query("SELECT * FROM {umenu} WHERE id = ?", [$menuId])->fetchAssoc();
@@ -37,7 +37,7 @@ class LegacyItemStorage implements ItemStorageInterface
         return $menu;
     }
 
-    protected function validateItem($otherItemId, $title, $nodeId)
+    protected function validateItem($otherItemId, $title, $nodeId, $url)
     {
         if (empty($otherItemId)) {
             throw new \InvalidArgumentException("Relative item identifier cannot be empty");
@@ -45,8 +45,8 @@ class LegacyItemStorage implements ItemStorageInterface
         if (empty($title)) {
             throw new \InvalidArgumentException("Title cannot be empty");
         }
-        if (empty($nodeId)) {
-            throw new \InvalidArgumentException("Node identifier cannot be empty");
+        if (empty($nodeId) && empty($url)) {
+            throw new \InvalidArgumentException("Node identifier and URL cannot be both empty cannot be empty");
         }
 
         // Find parent identifier
@@ -139,9 +139,9 @@ class LegacyItemStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function insert($menuId, $nodeId, $title, $description = null)
+    public function insert($menuId, $nodeId, $title, $description = null, $url = null)
     {
-        $menu = $this->validateMenu($menuId, $title, $nodeId);
+        $menu = $this->validateMenu($menuId, $title, $nodeId, $url);
 
         $weight = (int)$this->db->query("SELECT MAX(weight) + 1 FROM {menu_links} WHERE menu_name = ? AND plid = 0", [$menu['name']])->fetchField();
 
@@ -163,9 +163,9 @@ class LegacyItemStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function insertAsChild($otherItemId, $nodeId, $title, $description = null)
+    public function insertAsChild($otherItemId, $nodeId, $title, $description = null, $url = null)
     {
-        list(, $menuName) = $this->validateItem($otherItemId, $title, $nodeId);
+        list(, $menuName) = $this->validateItem($otherItemId, $title, $nodeId, $url);
 
         $weight = (int)$this->db->query("SELECT MAX(weight) + 1 FROM {menu_links} WHERE plid = ?", [$otherItemId])->fetchField();
 
@@ -188,9 +188,9 @@ class LegacyItemStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function insertAfter($otherItemId, $nodeId, $title, $description = null)
+    public function insertAfter($otherItemId, $nodeId, $title, $description = null, $url = null)
     {
-        list(, $menuName, $parentId, $weight) = $this->validateItem($otherItemId, $title, $nodeId);
+        list(, $menuName, $parentId, $weight) = $this->validateItem($otherItemId, $title, $nodeId, $url);
 
         $this
             ->db
@@ -223,9 +223,9 @@ class LegacyItemStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function insertBefore($otherItemId, $nodeId, $title, $description = null)
+    public function insertBefore($otherItemId, $nodeId, $title, $description = null, $url = null)
     {
-        list(, $menuName, $parentId, $weight) = $this->validateItem($otherItemId, $title, $nodeId);
+        list(, $menuName, $parentId, $weight) = $this->validateItem($otherItemId, $title, $nodeId, $url);
 
         $this
             ->db
@@ -258,7 +258,7 @@ class LegacyItemStorage implements ItemStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function update($itemId, $nodeId = null, $title = null, $description = null)
+    public function update($itemId, $nodeId = null, $title = null, $description = null, $url = null)
     {
         $exists = (bool)$this->db->query("SELECT 1 FROM {menu_links} WHERE mlid = ?", [$itemId])->fetchField();
 

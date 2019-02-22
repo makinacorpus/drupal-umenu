@@ -4,10 +4,14 @@
     <ul class="nav nav-stacked">
       {% for item in tree.children %}
         <li>
+          {% set url = item.url %}
+          {% if not url %}
+            {% set url = url(item.route) %}
+          {% endif %}
           {% if item.isInTrailOf(current) %}
-            <a class="active" href="{{ url(item.route) }}">{{ item.title }}</a>{{ umenu.tree(item, current) }}
+            <a class="active" href="{{ url }}">{{ item.title }}</a>{{ umenu.tree(item, current) }}
           {% else %}
-            <a href="{{ url(item.route) }}">{{ item.title }}</a>{{ umenu.tree(item, current) }}
+            <a href="{{ url }}">{{ item.title }}</a>{{ umenu.tree(item, current) }}
           {% endif %}
         </li>
       {% endfor %}

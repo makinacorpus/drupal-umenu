@@ -30,9 +30,11 @@ class TreeBase
      */
     public function getChildrenNodeIdList()
     {
-        return array_map(function ($child) {
-            return $child->getNodeId();
-        }, $this->children);
+        return \array_filter(
+            \array_map(function ($child) {
+                return $child->getNodeId();
+            }, $this->children)
+        );
     }
 
     /**

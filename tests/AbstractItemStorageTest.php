@@ -10,6 +10,7 @@ use MakinaCorpus\Umenu\MenuStorageInterface;
 use MakinaCorpus\Umenu\TreeBase;
 use MakinaCorpus\Umenu\TreeManager;
 use MakinaCorpus\Umenu\TreeProviderInterface;
+use MakinaCorpus\Umenu\TreeItem;
 
 abstract class AbstractItemStorageTest extends AbstractDrupalTest
 {
@@ -47,13 +48,18 @@ abstract class AbstractItemStorageTest extends AbstractDrupalTest
      */
     abstract protected function getTreeProvider();
 
+    private function getIdPart(TreeItem $item): string
+    {
+        return (string)($item->getNodeId() ?? \md5($item->getUrl()));
+    }
+
     protected function recursiveBuildArray(TreeBase $item)
     {
         $ret = [];
 
         if ($item->hasChildren()) {
             foreach ($item->getChildren() as $child) {
-                $ret[$child->getTitle() . '.' . $child->getNodeId() . '.' . $child->getId()] = $this->recursiveBuildArray($child);
+                $ret[$child->getTitle() . '.' . $this->getIdPart($child) . '.' . $child->getId()] = $this->recursiveBuildArray($child);
             }
         }
 
@@ -66,7 +72,7 @@ abstract class AbstractItemStorageTest extends AbstractDrupalTest
 
         if ($item->hasChildren()) {
             foreach ($item->getChildren() as $child) {
-                $ret[$child->getTitle() . '.' . $child->getNodeId() . '.' . $child->getSiteId()] = $this->recursiveBuildArrayWithoutId($child);
+                $ret[$child->getTitle() . '.' . $this->getIdPart($child) . '.' . $child->getSiteId()] = $this->recursiveBuildArrayWithoutId($child);
             }
         }
 

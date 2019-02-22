@@ -16,6 +16,7 @@ final class TreeItem extends TreeBase
     private $title;
     private $description;
     private $depth;
+    private $url;
 
     public function getId()
     {
@@ -32,6 +33,9 @@ final class TreeItem extends TreeBase
         return $this->site_id;
     }
 
+    /**
+     * @return ?int
+     */
     public function getNodeId()
     {
         return $this->node_id;
@@ -57,14 +61,30 @@ final class TreeItem extends TreeBase
         return $this->description;
     }
 
+    /**
+     * @return string
+     */
     public function getRoute()
     {
         return 'node/' . $this->node_id;
     }
 
+    /**
+     * @return int
+     */
     public function getDepth()
     {
         return $this->depth;
+    }
+
+    /**
+     * If URL is set, it will override node route.
+     *
+     * @return ?string
+     */
+    public function getUrl()
+    {
+        return $this->url;
     }
 
     public function isInTrailOf($nodeId)

@@ -98,8 +98,7 @@ final class Tree extends TreeBase
             }
 
             // And we need to be able to fetch those per node too.
-            $nodeId = $item->getNodeId();
-            if ($nodeId) {
+            if ($nodeId = $item->getNodeId()) {
                 $this->perNode[$nodeId][] = $item;
             }
         }
